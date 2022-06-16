@@ -143,7 +143,7 @@ exit_on_lock() {
     # check if a lock file exists for this src/dest combo
     flock -n 9 || exit_on_lock
 
-    # configure logging
+    # configure logging for linux machines (no log rotation on mac machines)
     savelog -C -n -c 3 "${log_file}" >/dev/null 2>&1
     # -C force cleanup of cycled logfiles
     # -n do not rotate empty files
