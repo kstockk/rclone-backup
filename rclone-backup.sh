@@ -52,7 +52,7 @@ dest="${2}" # destination
 
 # other options - https://rclone.org/flags/
 RCLONE_EXCLUDE_FILE="$(dirname "$0")/rclone-exclude" # read file exclusion patterns from file
-# RCLONE_EXCLUDE_IF_PRESENT=".rclone-ignore" # exclude directories if this filename is present
+RCLONE_EXCLUDE_IF_PRESENT=".rclone-ignore" # exclude directories if this filename is present
 # RCLONE_BWLIMIT="08:00,2M 00:00,off" # 2MB/s bandwidth limit between 8am and midnight
 # RCLONE_MIN_AGE=15m # skip sync for files created in the last 15 minutes
 # RCLONE_TRANSFERS=4 # number of file transfers to run in parallel
@@ -152,8 +152,9 @@ exit_on_lock() {
     # it's syncing time!
     echo "starting rclone sync (${src} -> ${dest})" | format_output
     start_time="$(date +%s)"
-    # rclone sync "$src" "$dest" -vv --log-file "$log_file" --exclude-from "$RCLONE_EXCLUDE_FILE" --delete-excluded --retries 1 --low-level-retries 2
-    rclone sync "${src}" "${dest}/latest" -vv --log-file "${log_file}" --exclude-from "${RCLONE_EXCLUDE_FILE}" --backup-dir "${dest}/$(date -u +"%Y-%m-%dT%H:%M:%SZ")" --delete-excluded --retries 1 --low-level-retries 2
+
+    # main rclone command
+    rclone sync "${src}" "${dest}/latest" -vv --log-file "${log_file}" --exclude-if-present "${RCLONE_EXCLUDE_IF_PRESENT}" --exclude-from "${RCLONE_EXCLUDE_FILE}" --backup-dir "${dest}/$(date -u +"%Y-%m-%dT%H:%M:%SZ")" --delete-excluded --retries 1 --low-level-retries 2
 
     # finato
     duration="$(display_time_difference "${start_time}")"
@@ -161,6 +162,6 @@ exit_on_lock() {
     echo
     echo "log output"
     echo
-    cat "$log_file" | grep -Ew "ERROR|INFO|Transferred|Checks|Elapsed time|^$"
+    cat "$log_file" | grep -Ew "$(date -u +"%Y-%m-%d")|ERROR|INFO|Transferred|Checks|Elapsed time|^$"
 
 ) 9>"${lockfile}"
