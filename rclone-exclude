@@ -17,3 +17,5 @@ Thumbs.db
 /var/lib/docker
 .sync/
 /.rsync_tmbackup/
+.Trashes
+.fseventsd
