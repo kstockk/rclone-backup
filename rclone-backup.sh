@@ -154,14 +154,10 @@ exit_on_lock() {
     start_time="$(date +%s)"
 
     # main rclone command
-    rclone sync "${src}" "${dest}/latest" --log-file "${log_file}" --exclude-if-present "${RCLONE_EXCLUDE_IF_PRESENT}" --exclude-from "${RCLONE_EXCLUDE_FILE}" --backup-dir "${dest}/$(date -u +"%Y-%m-%dT%H:%M:%SZ")" --delete-excluded --retries 1 --low-level-retries 2
+    rclone sync "${src}" "${dest}/latest" --log-file "${log_file}" --exclude-if-present "${RCLONE_EXCLUDE_IF_PRESENT}" --exclude-from "${RCLONE_EXCLUDE_FILE}" --backup-dir "${dest}/$(date -u +"%Y-%m-%dT%H%M%SZ")" --delete-excluded --retries 1 --low-level-retries 2
 
     # finato
     duration="$(display_time_difference "${start_time}")"
     echo "success: rclone sync complete! (took "$duration")" | format_output
-    echo
-    echo "log output"
-    echo
-    cat "$log_file" | grep -Ew "$(date -u +"%Y-%m-%d")|ERROR|INFO|Transferred|Checks|Elapsed time|^$"
 
 ) 9>"${lockfile}"
