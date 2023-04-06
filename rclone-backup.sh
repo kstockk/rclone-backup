@@ -46,6 +46,7 @@
 # input arguments
 src="${1}" # source
 dest="${2}" # destination
+args=${3:-} # additional args for rclone command
 
 # optional
 # log_path="/var/log/" # override default log with your own location
@@ -154,7 +155,9 @@ exit_on_lock() {
     start_time="$(date +%s)"
 
     # main rclone command
-    rclone sync "${src}" "${dest}/latest" --log-file "${log_file}" --exclude-if-present "${RCLONE_EXCLUDE_IF_PRESENT}" --exclude-from "${RCLONE_EXCLUDE_FILE}" --backup-dir "${dest}/$(date -u +"%Y-%m-%dT%H%M%SZ")" --delete-excluded --retries 1 --low-level-retries 2
+    rclone sync "${src}" "${dest}/latest" --log-file "${log_file}" --exclude-if-present "${RCLONE_EXCLUDE_IF_PRESENT}" --exclude-from "${RCLONE_EXCLUDE_FILE}" --backup-dir "${dest}/$(date -u +"%Y-%m-%dT%H%M%SZ")" --delete-excluded --retries 1 --low-level-retries 2 ${args}
+
+    cat ${log_file}
 
     # finato
     duration="$(display_time_difference "${start_time}")"
